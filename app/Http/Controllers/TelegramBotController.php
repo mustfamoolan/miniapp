@@ -32,7 +32,7 @@ class TelegramBotController extends Controller
                         [
                             [
                                 'text' => 'Open Mini App',
-                                'web_app' => ['url' => env('APP_URL')]
+                                'web_app' => ['url' => config('app.url')]
                             ]
                         ]
                     ]
@@ -50,7 +50,7 @@ class TelegramBotController extends Controller
      */
     protected function sendMessage(int $chatId, string $text, array $replyMarkup = [])
     {
-        $botToken = env('TELEGRAM_BOT_TOKEN');
+        $botToken = config('services.telegram.bot_token');
 
         if (empty($botToken)) {
             Log::error('Telegram Bot Token is not set.');
