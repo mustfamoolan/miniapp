@@ -6,6 +6,13 @@
 
 @theme {
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --color-var-tg-bg: var(--tg-theme-bg-color, #ffffff);
+  --color-var-tg-text: var(--tg-theme-text-color, #000000);
+  --color-var-tg-hint: var(--tg-theme-hint-color, #999999);
+  --color-var-tg-link: var(--tg-theme-link-color, #2481cc);
+  --color-var-tg-button: var(--tg-theme-button-color, #5288c1);
+  --color-var-tg-button-text: var(--tg-theme-button-text-color, #ffffff);
+  --color-var-tg-secondary-bg: var(--tg-theme-secondary-bg-color, #f4f4f5);
 }
 
 * {
