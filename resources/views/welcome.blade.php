@@ -12,6 +12,9 @@
         {{-- Telegram WebApp SDK --}}
         <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
+        {{-- Google Material Symbols --}}
+        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+
         {{-- Vite Assets --}}
         @vite(['resources/css/app.css', 'resources/js/app.jsx'])
     </head>

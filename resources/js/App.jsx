@@ -1,65 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { createRoot } from 'react-dom/client';
 import useAppStore from './store/useAppStore';
 import CustomerProfile from './components/CustomerProfile';
 
-/* ─── Hero Balance Component ───────────────────────────────── */
-function BalanceHero({ data, onAddCustomer }) {
-  return (
-    <div className="flex flex-col items-center pt-8 pb-6 px-4">
-      <div className="w-14 h-14 rounded-full bg-var-tg-secondary-bg mb-3 flex items-center justify-center text-2xl shadow-sm">
-        💰
-      </div>
-      <p className="text-var-tg-hint font-medium text-sm mb-1">إجمالي المستحقات (ديون + أقساط)</p>
-      <div className="flex items-baseline gap-1 mb-6 text-var-tg-text">
-        <span className="text-4xl font-black tracking-tight">{data?.total_receivables?.toLocaleString('ar-IQ') || '0'}</span>
-        <span className="text-lg font-bold text-var-tg-hint"> د.ع</span>
-      </div>
-
-      <div className="flex w-full justify-center gap-4">
-        <button
-          onClick={onAddCustomer}
-          className="flex flex-col items-center gap-2 active:scale-95 transition-transform"
-        >
-          <div className="w-14 h-14 rounded-full bg-blue-500 text-white flex items-center justify-center shadow-md">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line>
-            </svg>
-          </div>
-          <span className="text-xs font-bold text-var-tg-text">زبون جديد</span>
-        </button>
-      </div>
-    </div>
-  );
-}
-
-/* ─── Alert Strip ──────────────────────────────────────────── */
-function AlertStrip({ overdueCount, upcomingCount }) {
-  if (!overdueCount && !upcomingCount) return null;
-  return (
-    <div className="px-4 mb-4 flex gap-2">
-      {overdueCount > 0 && (
-        <div className="flex-1 bg-red-500/10 border border-red-500/20 rounded-xl p-3 flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center">⚠️</div>
-          <div>
-            <p className="text-red-500 font-bold text-sm leading-tight">متأخرة</p>
-            <p className="text-red-500/70 text-xs">{overdueCount} دفعات</p>
-          </div>
-        </div>
-      )}
-      {upcomingCount > 0 && (
-        <div className="flex-1 bg-amber-500/10 border border-amber-500/20 rounded-xl p-3 flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-amber-500 text-white flex items-center justify-center">⏳</div>
-          <div>
-            <p className="text-amber-600 dark:text-amber-400 font-bold text-sm leading-tight">قادمة قريباً</p>
-            <p className="text-amber-600/70 dark:text-amber-400/70 text-xs">{upcomingCount} خلال أسبوع</p>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-/* ─── Main App ─────────────────────────────────────────────── */
 export default function App() {
   const { user, isReady, initTelegram, dashboardData, addCustomer, triggerHaptic } = useAppStore();
   const [selectedCustomerId, setSelectedCustomerId] = useState(null);
@@ -71,15 +14,7 @@ export default function App() {
     initTelegram();
     const tg = window.Telegram?.WebApp;
     if (tg) {
-      document.documentElement.style.setProperty('--tg-theme-bg-color', tg.themeParams.bg_color || '#ffffff');
-      document.documentElement.style.setProperty('--tg-theme-text-color', tg.themeParams.text_color || '#000000');
-      document.documentElement.style.setProperty('--tg-theme-hint-color', tg.themeParams.hint_color || '#999999');
-      document.documentElement.style.setProperty('--tg-theme-link-color', tg.themeParams.link_color || '#2481cc');
-      document.documentElement.style.setProperty('--tg-theme-button-color', tg.themeParams.button_color || '#5288c1');
-      document.documentElement.style.setProperty('--tg-theme-button-text-color', tg.themeParams.button_text_color || '#ffffff');
-      document.documentElement.style.setProperty('--tg-theme-secondary-bg-color', tg.themeParams.secondary_bg_color || '#f4f4f5');
-      document.body.style.backgroundColor = 'var(--tg-theme-bg-color)';
-      document.body.style.color = 'var(--tg-theme-text-color)';
+      document.documentElement.style.setProperty('--tg-theme-bg-color', tg.themeParams.bg_color || '#faf8ff');
     }
   }, []);
 
@@ -95,8 +30,8 @@ export default function App() {
 
   if (!isReady || !dashboardData) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-var-tg-bg">
-        <div className="w-8 h-8 rounded-full border-3 border-blue-500 border-t-transparent animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="w-8 h-8 rounded-full border-4 border-primary border-t-transparent animate-spin" />
       </div>
     );
   }
@@ -107,62 +42,164 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen w-full bg-var-tg-bg text-var-tg-text font-sans antialiased" dir="rtl">
-      <BalanceHero data={dashboardData} onAddCustomer={() => { triggerHaptic('light'); setShowAddCustomer(true); }} />
-      <AlertStrip overdueCount={dashboardData.overdue_count} upcomingCount={dashboardData.upcoming_count} />
+    <div className="bg-background text-on-background select-none min-h-screen" dir="rtl">
       
-      <div className="px-4 pb-8">
-        <h2 className="text-lg font-bold mb-3 mt-2 text-var-tg-text">دليل الزبائن</h2>
-        <div className="flex flex-col gap-3">
-          {dashboardData.customers?.length > 0 ? (
-            dashboardData.customers.map((c) => (
-              <div 
-                key={c.id} 
-                onClick={() => { triggerHaptic('light'); setSelectedCustomerId(c.id); }}
-                className="bg-var-tg-secondary-bg rounded-xl p-4 flex items-center justify-between shadow-sm border border-var-tg-hint-color/5 active:scale-[0.98] transition-transform cursor-pointer"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-blue-500/10 text-blue-500 flex items-center justify-center font-bold text-lg">
-                    {c.name[0]}
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-var-tg-text">{c.name}</h3>
-                    <p className="text-xs text-var-tg-hint">{c.phone || 'بدون رقم'}</p>
-                  </div>
-                </div>
-                <div className="text-left">
-                  <p className="font-bold text-orange-500">{Number(c.total_due).toLocaleString('ar-IQ')}</p>
-                  <p className="text-xs text-var-tg-hint">د.ع</p>
-                </div>
-              </div>
-            ))
-          ) : (
-            <div className="py-12 text-center text-var-tg-hint bg-var-tg-secondary-bg rounded-xl">
-              <p>لا يوجد زبائن حتى الآن.</p>
-              <p className="text-sm mt-1">اضغط على زر "زبون جديد" للبدء.</p>
+      {/* TopAppBar */}
+      <header className="fixed top-0 w-full z-50 bg-background flex flex-row-reverse justify-between items-center px-container-padding py-stack-gap h-16">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center border border-outline-variant overflow-hidden text-primary">
+            <span className="material-symbols-outlined">person</span>
+          </div>
+          <div className="flex flex-col items-end">
+            <span className="font-headline-lg-mobile text-headline-lg-mobile font-semibold text-on-surface">مرحباً</span>
+            <div className="flex items-center gap-1.5">
+              <span className="font-label-sm text-label-sm text-on-surface-variant">نشط</span>
+              <span className="w-2 h-2 rounded-full bg-green-500 pulsing-dot"></span>
             </div>
-          )}
+          </div>
         </div>
-      </div>
+        <button className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-low transition-colors">
+          <span className="material-symbols-outlined text-on-surface-variant">notifications</span>
+        </button>
+      </header>
+
+      <main className="pt-20 pb-24 px-container-padding space-y-6">
+        
+        {/* Hero Balance Card */}
+        <section className="relative overflow-hidden rounded-2xl bg-primary-container p-container-padding text-on-primary-container shadow-sm border border-primary/10">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16 blur-3xl"></div>
+          <div className="relative z-10 space-y-4">
+            <div className="flex flex-col space-y-1">
+              <span className="font-label-sm text-label-sm opacity-90">إجمالي المستحقات المتبقية</span>
+              <h1 className="font-display-currency text-display-currency">
+                {dashboardData?.total_receivables?.toLocaleString('ar-IQ') || '0'} <span className="text-headline-lg-mobile opacity-80 font-normal">د.ع</span>
+              </h1>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {dashboardData?.overdue_count > 0 && (
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-error-container text-on-error-container border border-error/10">
+                  <span className="material-symbols-outlined text-[16px]">warning</span>
+                  <span className="font-label-sm text-label-sm">أقساط متأخرة</span>
+                </div>
+              )}
+              {dashboardData?.upcoming_count > 0 && (
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed border border-tertiary/10">
+                  <span className="material-symbols-outlined text-[16px]">event_upcoming</span>
+                  <span className="font-label-sm text-label-sm">مستحقات قادمة</span>
+                </div>
+              )}
+              {(!dashboardData?.overdue_count && !dashboardData?.upcoming_count) && (
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary-fixed text-on-primary-fixed border border-primary/10">
+                  <span className="material-symbols-outlined text-[16px]">check_circle</span>
+                  <span className="font-label-sm text-label-sm">لا توجد مستحقات قريبة</span>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+
+        {/* Quick Actions */}
+        <section className="grid grid-cols-3 gap-stack-gap">
+          <button onClick={() => { triggerHaptic('light'); setShowAddCustomer(true); }} className="flex flex-col items-center gap-2 group">
+            <div className="w-16 h-16 rounded-full bg-surface-container-lowest border border-outline-variant flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300">
+              <span className="material-symbols-outlined text-2xl">person_add</span>
+            </div>
+            <span className="font-label-sm text-label-sm text-on-surface text-center">إضافة زبون</span>
+          </button>
+          <button className="flex flex-col items-center gap-2 opacity-50 cursor-not-allowed">
+            <div className="w-16 h-16 rounded-full bg-surface-container-lowest border border-outline-variant flex items-center justify-center text-primary">
+              <span className="material-symbols-outlined text-2xl">payments</span>
+            </div>
+            <span className="font-label-sm text-label-sm text-on-surface text-center">تسجيل سداد</span>
+          </button>
+          <button className="flex flex-col items-center gap-2 opacity-50 cursor-not-allowed">
+            <div className="w-16 h-16 rounded-full bg-surface-container-lowest border border-outline-variant flex items-center justify-center text-primary">
+              <span className="material-symbols-outlined text-2xl">description</span>
+            </div>
+            <span className="font-label-sm text-label-sm text-on-surface text-center">كشف حساب</span>
+          </button>
+        </section>
+
+        {/* Asset Directory */}
+        <section className="space-y-3">
+          <div className="flex justify-between items-center px-1">
+            <span className="font-label-sm text-label-sm text-on-surface-variant">الزبائن النشطون</span>
+            <span className="material-symbols-outlined text-on-surface-variant text-[20px]">filter_list</span>
+          </div>
+          <div className="space-y-stack-gap">
+            {dashboardData.customers?.length > 0 ? (
+              dashboardData.customers.map(c => (
+                <div 
+                  key={c.id} 
+                  onClick={() => { triggerHaptic('light'); setSelectedCustomerId(c.id); }}
+                  className="bg-surface-container-lowest p-container-padding rounded-xl border border-outline-variant/30 flex items-center justify-between hover:border-primary/30 transition-colors active:scale-[0.98] duration-150 cursor-pointer"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-lg bg-primary/5 flex items-center justify-center text-primary">
+                      <span className="material-symbols-outlined">person</span>
+                    </div>
+                    <div className="flex flex-col text-right">
+                      <span className="font-body-md text-body-md font-semibold text-on-surface">{c.name}</span>
+                      <span className="font-label-sm text-label-sm text-outline">{c.phone || 'بدون رقم'}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="flex flex-col items-end">
+                      <span className="font-body-md text-body-md font-bold text-primary">{Number(c.total_due).toLocaleString('ar-IQ')} د.ع</span>
+                    </div>
+                    <span className="material-symbols-outlined text-outline">chevron_left</span>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="py-8 text-center bg-surface-container-lowest rounded-xl border border-outline-variant/30">
+                <p className="text-on-surface-variant font-body-md">لا يوجد زبائن حتى الآن.</p>
+              </div>
+            )}
+          </div>
+        </section>
+
+      </main>
 
       {/* Add Customer Modal */}
       {showAddCustomer && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end">
-          <div className="w-full bg-var-tg-bg rounded-t-3xl p-5 pb-10 animate-fade-in-up">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end justify-center">
+          <div className="w-full max-w-md bg-surface rounded-t-[24px] p-6 pb-safe animate-fade-in-up border-t border-outline-variant/30">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-bold">إضافة زبون جديد</h2>
-              <button onClick={() => setShowAddCustomer(false)} className="text-var-tg-hint text-xl">✕</button>
+              <h2 className="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">إضافة زبون جديد</h2>
+              <button onClick={() => setShowAddCustomer(false)} className="w-8 h-8 flex items-center justify-center rounded-full bg-surface-container hover:bg-surface-container-high transition-colors text-on-surface-variant">
+                <span className="material-symbols-outlined text-[20px]">close</span>
+              </button>
             </div>
-            <div className="flex flex-col gap-4">
-              <div>
-                <label className="text-xs text-var-tg-hint mb-1 block">اسم الزبون (مطلوب)</label>
-                <input type="text" className="w-full bg-var-tg-secondary-bg p-3 rounded-xl border-none outline-none text-var-tg-text" value={newCustomerName} onChange={e => setNewCustomerName(e.target.value)} />
+            
+            <div className="space-y-4">
+              <div className="space-y-1">
+                <label className="font-label-sm text-label-sm text-on-surface-variant">اسم الزبون (مطلوب)</label>
+                <input 
+                  type="text" 
+                  value={newCustomerName}
+                  onChange={e => setNewCustomerName(e.target.value)}
+                  className="w-full bg-surface-container-lowest border border-outline-variant rounded-xl px-4 py-3 text-on-surface outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all font-body-md" 
+                  placeholder="مثال: أحمد جاسم محمد"
+                />
               </div>
-              <div>
-                <label className="text-xs text-var-tg-hint mb-1 block">رقم الهاتف (اختياري)</label>
-                <input type="tel" className="w-full bg-var-tg-secondary-bg p-3 rounded-xl border-none outline-none text-var-tg-text" value={newCustomerPhone} onChange={e => setNewCustomerPhone(e.target.value)} />
+              <div className="space-y-1">
+                <label className="font-label-sm text-label-sm text-on-surface-variant">رقم الهاتف (اختياري)</label>
+                <input 
+                  type="tel" 
+                  value={newCustomerPhone}
+                  onChange={e => setNewCustomerPhone(e.target.value)}
+                  className="w-full bg-surface-container-lowest border border-outline-variant rounded-xl px-4 py-3 text-on-surface outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all font-body-md" 
+                  placeholder="0770 000 0000"
+                />
               </div>
-              <button onClick={handleCreateCustomer} className="w-full py-4 mt-2 rounded-xl bg-var-tg-button text-var-tg-button-text font-bold active:scale-95 shadow-lg shadow-var-tg-button/30">
+              
+              <button 
+                onClick={handleCreateCustomer} 
+                disabled={!newCustomerName}
+                className="w-full bg-primary text-on-primary font-headline-lg-mobile text-headline-lg-mobile py-4 rounded-xl mt-4 active:scale-[0.98] transition-transform disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2 shadow-lg shadow-primary/20"
+              >
+                <span className="material-symbols-outlined">person_add</span>
                 حفظ الزبون
               </button>
             </div>
@@ -172,8 +209,6 @@ export default function App() {
     </div>
   );
 }
-
-import { createRoot } from 'react-dom/client';
 
 const container = document.getElementById('app');
 if (container) {
