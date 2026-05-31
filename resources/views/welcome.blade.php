@@ -13,7 +13,7 @@
         <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
         {{-- Vite Assets --}}
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @vite(['resources/css/app.css', 'resources/js/app.jsx'])
     </head>
     <body style="margin:0;padding:0;background:#0d0d14;overflow-x:hidden;">
         <div id="app"></div>
