@@ -7,6 +7,9 @@ const api = axios.create({
   headers: {
     'Accept': 'application/json',
     'Content-Type': 'application/json',
+    'Cache-Control': 'no-cache, no-store, must-revalidate',
+    'Pragma': 'no-cache',
+    'Expires': '0',
   }
 });
 
@@ -49,7 +52,7 @@ const useAppStore = create((set, get) => ({
   fetchDashboard: async () => {
     set({ loading: true, error: null });
     try {
-      const response = await api.get('/dashboard');
+      const response = await api.get(`/dashboard?_t=${Date.now()}`);
       set({ dashboardData: response.data, loading: false });
     } catch (error) {
       console.error('Failed to fetch dashboard', error);
@@ -60,7 +63,7 @@ const useAppStore = create((set, get) => ({
   fetchCustomerProfile: async (id) => {
     set({ loading: true, error: null });
     try {
-      const response = await api.get(`/customers/${id}`);
+      const response = await api.get(`/customers/${id}?_t=${Date.now()}`);
       set({ activeCustomer: response.data, loading: false });
     } catch (error) {
       console.error('Failed to fetch customer profile', error);
