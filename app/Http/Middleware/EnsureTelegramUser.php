@@ -34,6 +34,15 @@ class EnsureTelegramUser
             return $user;
         });
 
-        return $next($request);
+        $response = $next($request);
+
+        // Prevent iOS Telegram WebApp and LiteSpeed aggressive caching
+        if ($response instanceof \Illuminate\Http\JsonResponse || $response instanceof \Illuminate\Http\Response) {
+            $response->headers->set('Cache-Control', 'no-cache, no-store, must-revalidate');
+            $response->headers->set('Pragma', 'no-cache');
+            $response->headers->set('Expires', '0');
+        }
+
+        return $response;
     }
 }

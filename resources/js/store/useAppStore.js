@@ -44,8 +44,12 @@ const useAppStore = create((set, get) => ({
   },
 
   triggerHaptic: (style = 'medium') => {
-    if (window.Telegram?.WebApp?.HapticFeedback) {
-      window.Telegram.WebApp.HapticFeedback.impactOccurred(style);
+    try {
+      if (window.Telegram?.WebApp?.HapticFeedback?.impactOccurred) {
+        window.Telegram.WebApp.HapticFeedback.impactOccurred(style);
+      }
+    } catch (e) {
+      console.warn('Haptic feedback failed:', e);
     }
   },
 
